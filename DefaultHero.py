@@ -1,3 +1,4 @@
+
 player = {'lvl' : 1, #level
         'xp' : 0, # experience
         'name' : 'bob',
@@ -55,7 +56,7 @@ player = {'lvl' : 1, #level
         'ratks' : {'1' : 'punch', #r atks are regular
             '2' : 'kick',
             '3' : 'jab',  #'s 1-3 are lvl 1 atks
-            '4' : 'locked', #lvl 5 atk unlock 
+            '4' : 'locked', #lvl 5 atk unlock
             '5' : 'locked', #lvl 10 atk unlock (roundhouse kick)
             '6' : 'locked'}, #lvl 50 atk unlock (elemental ball)
         'aatks' : {'1' : 'locked',#a atks are assistant; #1 is lvl 10 unlock
@@ -66,6 +67,3 @@ player = {'lvl' : 1, #level
             '2' : 'locked', #2 is secret unlock
             '3' : 'locked'},#3 is boneandblood trophy
         'matks' : {'1' : 'locked'}}  #m atks are mega, #1 is lvl 100 unlock
-
-player['name'] = player
-hero = player

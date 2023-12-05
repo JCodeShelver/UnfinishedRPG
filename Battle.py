@@ -1,8 +1,9 @@
 import random
 import sys
 import time
-from Testing import sprint
-from DefaultHero import *
+from Utils import sprint
+from DefaultHero import player as player
+from LevelUp import level as level
 from EnemyList import *
 from SaveLoad import *
 
@@ -11,31 +12,11 @@ def playerTakeDmg(attacker, defender):
                          attacker['stats']['atk'][1])
     defender['stats']['hp'] -= dmg
     if defender['stats']['hp'] <= 0:
-        sprint('{} has been slain.\n'.format(defender['name']))
-        if defender == hero:
-            sprint('You died!\n')
-            sprint('Would you like to continue? Y/')
-            gameover = input('N ').lower()
-            if gameover == 'y':
-                load()
-            if gameover == 'n':
-                sprint('Game Over!\n')
-                time.sleep(5)
-                sys.exit()
-    sprint('{} takes {} damage!\n'.format(defender['name'], dmg))
-    commands(defender, attacker)
-
-def takeDmgextra(attacker, defender):
-    dmgprecursor = random.randint(attacker['stats']['atk'][0], \
-                         attacker['stats']['atk'][1])
-    dmg = (1 + random.randint(attacker['atkplus'][0], attacker['atkplus'][1]) / 100) * dmgprecursor
-    defender['stats']['hp'] -= dmg
-    if defender['stats']['hp'] <= 0:
         sprint(f'{defender["name"]} has been slain.\n')
-        if defender == hero:
+        if defender == player:
             sprint('You died!\n')
-            sprint('Would you like to continue? Y/')
-            gameover = input('N ').lower()
+            sprint('Would you like to continue? Y/N ')
+            gameover = input().lower()
             if gameover == 'y':
                 load()
             if gameover == 'n':
@@ -45,11 +26,31 @@ def takeDmgextra(attacker, defender):
     sprint(f'{defender["name"]} takes {dmg} damage!\n')
     commands(defender, attacker)
 
+def takeDmgextra(attacker, defender):
+    dmgprecursor = random.randint(attacker['stats']['atk'][0], \
+                         attacker['stats']['atk'][1])
+    dmg = (1 + random.randint(attacker['atkplus'][0], attacker['atkplus'][1]) / 100) * dmgprecursor
+    defender['stats']['hp'] -= dmg
+    if defender['stats']['hp'] <= 0:
+        sprint(f'{defender["name"]} has been slain.\n')
+        if defender == player:
+            sprint('You died!\n')
+            sprint('Would you like to continue? Y/N ')
+            gameover = input().lower()
+            if gameover == 'y':
+                load()
+            elif gameover == 'n':
+                sprint('Game Over!\n')
+                time.sleep(5)
+                sys.exit()
+    sprint(f'{defender["name"]} takes {dmg} damage!\n')
+    commands(defender, attacker)
+
 def enemyTakeDmg(attacker, defender):
-    atks = (sorted(attacker['ratks']) + sorted(attacker['aatks']) + sorted(attacker['satks']) + sorted(attacker['matks']))
+    atks = '\n'.join(sorted(attacker['ratks'])+ sorted(attacker['aatks']) + sorted(attacker['satks']) + sorted(attacker['matks']))
     sprint(atks)
-    sprint('Choose your attack')
-    dmg = input(': ')
+    sprint('Choose your attack: ')
+    dmg = input()
     if dmg == 'r1':
         dmg = random.randint(((attacker['stats'][0] * attacker['stats']['str'])/2.3), \
                              ((attacker['stats'][1] * attacker['stats']['str'])/2.3))
@@ -83,56 +84,59 @@ def enemyTakeDmg(attacker, defender):
         pass
     defender['stats']['hp'] -= dmg
     if defender['stats']['hp'] <= 0:
-        sprint('{} has been slain.\n'.format(defender['name']))
-        if defender == hero:
+        sprint(f'{defender["name"]} has been slain.\n')
+        if defender == player:
             sprint('You died!\n')
-            sprint('Would you like to continue? Y/')
-            gameover = input('N ').lower()
+            sprint('Would you like to continue? Y/N ')
+            gameover = input().lower()
             if gameover == 'y':
                 load()
             if gameover == 'n':
                 sprint('Game Over!\n')
                 time.sleep(5)
                 sys.exit()
-        if attacker == hero:
+        if attacker == player:
             if defender == ghost:
                 if attacker['pets']['slot1'] == 'empty':
                         attacker['pets']['slot1'] = defender['reward']
-                        sprint('You\'ve obtained {}!\n'.format(defender['reward']))
+                        sprint(f'You\'ve obtained {defender["reward"]}!\n')
                 if attacker['pets']['slot1'] != 'empty':
                     for slots in attacker['pets']:
-                        if slot in slots == 'empty':
-                            slot = defender['reward']
-                    sprint('You\'ve obtained {}!\n'.format(defender['reward']))
+                        for slot in slots:
+                            if slot == 'empty':
+                                slot = defender['reward']
+                    sprint(f'You\'ve obtained {defender["reward"]}!\n')
                     attacker['xp'] += defender['xpreward']
                     level(attacker)
-            if defender == dragon:
+            elif defender == dragon:
                     if attacker['items']['slot1'] == 'empty':
                         random.shuffle(dragon['reward'])
                         attacker['items']['slot1'] = defender['reward'][0]
-                        sprint('You\'ve obtained {}!\n'.format(defender['reward'[0]]))
+                        sprint(f'You\'ve obtained {defender["reward"[0]]}!\n')
                     if attacker['items']['slot1'] != 'empty':
                         for slots in attacker['items']:
-                            if slot in slots == 'empty':
-                                slot = defender['reward']
-                        sprint('You\'ve obtained {}!\n'.format(defender['reward']))
+                            for slot in slots:
+                                if slot == 'empty':
+                                    slot = defender['reward']
+                        sprint(f'You\'ve obtained {defender["reward"]}!\n')
                         attacker['xp'] += defender['xpreward']
                         level(attacker)
             if attacker['items']['slot1'] == 'empty':
                 attacker['items']['slot1'] = defender['reward']
-                sprint('You\'ve obtained {}!\n'.format(defender['reward']))
+                sprint(f'You\'ve obtained {defender["reward"]}!\n')
             for slots in attacker['items']:
-                if slot in slots == 'empty':
-                    slot = defender['reward']
-            sprint('You\'ve obtained {}!\n'.format(defender['reward']))
+                for slot in slots:
+                    if slot == 'empty':
+                        slot = defender['reward']
+            sprint(f'You\'ve obtained {defender["reward"]}!\n')
             attacker['xp'] += defender['xpreward']
             level(attacker)
     else:
-        sprint('{} takes {} damage!\n'.format(defender['name'], dmg))
+        sprint(f'{defender["name"]} takes {dmg} damage!\n')
         commands(attacker, defender)
 
 def commands(knight, enemy):
-    sprint('You\'ve run into a(n) {}!!!\n'.format(enemy['name']))
+    sprint(f'You\'ve run into a(n) {enemy["name"]}!!!\n')
     a=0
     while a != 5:
         sprint('-------------------\n')
@@ -147,76 +151,62 @@ def commands(knight, enemy):
             if 'y' in spell:
                 spells(knight['stats']['int'])
             if 'n' in spell:
-                sprint('{} takes the opportunity to attack {}!\n'.format(enemy['name'], knight['name']))
+                sprint(f'{enemy["name"]} takes the opportunity to attack {knight["name"]}!\n')
                 playerTakeDmg(enemy, knight)
         else:
             commands(knight, enemy)
     while True:
         if a == 5:
-            sprint('{} takes the opportunity to attack the {} with extra power!\n'.format(enemy['name'], knight['name']))
+            sprint(f'{enemy["name"]} takes the opportunity to attack the {knight["name"]} with extra power!\n')
             takeDmgextra(enemy, knight)
 
 #
 
-def spells(know): #activate with "spells(player['stats']['int'])
-    if know >= 25:
+def spells(knowledge: int): #activate with "spells(player['stats']['int'])
+    def heal(amt: int):
+        from math import ceil
+        if player['stats']['hp'] == player['stats']['maxHp']:
+                    sprint('You are already fully healed!')
+        else:
+            player['stats']['str'] -= ceil(amt / 2)
+            player['stats']['hp'] += amt
+            if player['stats']['hp'] > player['stats']['maxHp']:
+                player['stats']['hp'] = player['stats']['maxHp']
+
+    if knowledge >= 25:
         sprint('Would you like to cast a heal, power, or money spell')
         cast = input("? ").lower()
         if cast == 'yes':
             sprint('Power, Money, or Heal')
             choose = input('? ').lower()
             if choose == 'power':
-                player["stats"]['str'] + 10
-                player['stats']['atk'][1] + 5
-                player['stats']['hp'] - 20
-                pass
-            if choose == 'heal':
-                player['stats']['str'] - 5
-                player['stats']['hp'] + 10
-                if player['stats']['hp'] > player['stats']['maxHp']:
-                    player['stats']['hp'] = player['stats']['maxHp']
-                pass
-            if choose == 'money':
-                player['stats']['str'] - 5
-                player['stats']['dex'] - 5
-                amount = random.randint[(5*(player['lvl'])), (10*(player['lvl']))]
-                currencies=['jewels', 'crowns', 'doubloons']
+                player["stats"]['str'] += 10
+                player['stats']['atk'][1] += 5
+                player['stats']['hp'] -= 20
+            elif choose == 'heal':
+                heal(10)
+            elif choose == 'money':
+                player['stats']['str'] -= 5
+                player['stats']['dex'] -= 5
+                amount = random.randint(5 * player['lvl'], 10 * player['lvl'])
+                currencies = ['jewels', 'crowns', 'doubloons']
                 random.shuffle(currencies)
-                x=currencies[0]
-                player['stats'][x] + amount
-                pass
-        if cast == 'no':
-            pass
-    if know >= 10:
-        sprint('Would you like to cast a heal or power spell')
-        cast = input("? ").lower()
-        if cast == 'yes':
-            sprint('Power or Heal')
-            choose = input('? ').lower()
+                player['stats'][currencies[0]] += amount
+    elif knowledge >= 10:
+        sprint('Would you like to cast a heal or power spell? ')
+        cast = input().lower()
+        if cast == 'yes' or cast == 'y':
+            sprint('Power or Heal? ')
+            choose = input().lower()
             if choose == 'power':
-                player["stats"]['str'] + 5
-                player['stats']['atk'][1] + 3
-                player['stats']['hp'] - 10
-                pass
-            if choose == 'heal':
-                player['stats']['str'] - 1
-                player['stats']['hp'] + 1
-                if player['stats']['hp'] > player['stats']['maxHp']:
-                    player['stats']['hp'] = player['stats']['maxHp']
-                pass
-        if cast == 'no':
-            pass
-    if know >= 5:
-        sprint('Would you like to cast a basic heal spell')
-        cast = input("? ").lower()
-        if cast == 'no':
-            pass
-        if cast == 'yes':
-            player['stats']['str'] - 1
-            player['stats']['hp'] + 1
-            if player['stats']['hp'] > player['stats']['maxHp']:
-                player['stats']['hp'] = player['stats']['maxHp']
-            pass
+                player["stats"]['str'] += 5
+                player['stats']['atk'][1] += 3
+                player['stats']['hp'] -= 10
+            elif choose == 'heal':
+                heal(1)
+    elif knowledge >= 5:
+        sprint('Would you like to cast a basic heal spell? ')
+        cast = input().lower()
+        if cast == 'yes' or cast == 'y':
+            heal(1)
     sprint(player['stats'])
-#end
-

@@ -511,7 +511,7 @@ if no time passed. Odd...')
 
 def move():
     sprint('Which direction would you like to move in')
-    dest = input('? ')
+    dest = input('? ').lower()
     directions = ['up', 'north', 'down', 'south', 'left', 'west', 'right', 'east']
     if dest=='north':
         dest='up'

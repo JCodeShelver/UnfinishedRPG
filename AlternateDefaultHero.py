@@ -1,5 +1,4 @@
-from typing import Dict, Any
-altPlayer : Dict[str, Any] = {
+altPlayer = {
     'lvl' : 1, #level
     'name' : 'bob',
     'xp' : 0, # experience
@@ -37,6 +36,3 @@ altPlayer : Dict[str, Any] = {
         '2' : 'kick',
         '3' : 'jab'},
     'batks' : {'1' : 'glorious stance'}} #boss attacks, only usable during bosses
-
-#The "hero = player" line is not inserted because when this is used, the player is not a hero.
-#They are only a ! I can't tell you, it's a secret, why are you here anyways? You hacker.
